@@ -3,6 +3,7 @@
 @using StockGainTracker.Models
 @using StockGainTracker.Services
 @inject StockDataService StockService
+@inject IJSRuntime JS
 
 <PageTitle>Stock Gains</PageTitle>
 
@@ -59,6 +60,7 @@ else if (gains is not null)
                 }
             </tbody>
         </table>
+        <button class="btn btn-secondary" @onclick="ExportCsv">Export CSV</button>
     }
 }
 
@@ -69,6 +71,15 @@ else if (gains is not null)
     private List<DailyGain>? gains;
     private bool loading;
     private string? errorMessage;
+
+    private async Task ExportCsv()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Date,Close,% Gain");
+        foreach (var g in gains!)
+            sb.AppendLine($"{g.Date.ToShortDateString()},{g.Close.ToString("F2")},{g.PercentGain.ToString("F2")}");
+        await JS.InvokeVoidAsync("downloadCsv", $"{ticker}-gains.csv", sb.ToString());
+    }
 
     private async Task LoadData()
     {

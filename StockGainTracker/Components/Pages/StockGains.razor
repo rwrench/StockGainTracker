@@ -1,0 +1,91 @@
+﻿@page "/stock-gains"
+@rendermode InteractiveServer
+@using StockGainTracker.Models
+@using StockGainTracker.Services
+@inject StockDataService StockService
+
+<PageTitle>Stock Gains</PageTitle>
+
+<h3>Daily % Gain</h3>
+
+<EditForm Model="this" OnValidSubmit="LoadData">
+    <div class="row g-2 align-items-end mb-3">
+        <div class="col-auto">
+            <label class="form-label">Ticker</label>
+            <input class="form-control" @bind="ticker" placeholder="e.g. VIK" />
+        </div>
+        <div class="col-auto">
+            <label class="form-label">From</label>
+            <InputDate class="form-control" @bind-Value="fromDate" />
+        </div>
+        <div class="col-auto">
+            <label class="form-label">To</label>
+            <InputDate class="form-control" @bind-Value="toDate" />
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Load</button>
+        </div>
+    </div>
+</EditForm>
+
+@if (loading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (gains is not null)
+{
+    @if (gains.Count == 0)
+    {
+        <p>No trading days found in that range.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr><th>Date</th><th>Close</th><th>% Gain</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var g in gains)
+                {
+                    <tr class="@(g.PercentGain >= 0 ? "text-success" : "text-danger")">
+                        <td>@g.Date.ToShortDateString()</td>
+                        <td>@g.Close.ToString("F2")</td>
+                        <td>@g.PercentGain.ToString("F2")%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private string ticker = "VIK";
+    private DateTime fromDate = DateTime.Today.AddDays(-14);
+    private DateTime toDate = DateTime.Today;
+    private List<DailyGain>? gains;
+    private bool loading;
+    private string? errorMessage;
+
+    private async Task LoadData()
+    {
+        loading = true;
+        errorMessage = null;
+        gains = null;
+        try
+        {
+            gains = await StockService.GetGainsForRangeAsync(ticker, fromDate, toDate);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Couldn't load data for '{ticker}': {ex.Message}";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

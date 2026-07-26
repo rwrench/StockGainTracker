@@ -1,4 +1,4 @@
-﻿namespace StockGainTracker.Models;
+﻿namespace StockGainTracker.Shared.Models;
 
 public class DailyGain
 {

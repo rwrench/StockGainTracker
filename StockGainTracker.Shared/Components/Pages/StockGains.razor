@@ -1,9 +1,8 @@
 ﻿@page "/"
-@rendermode InteractiveServer
-@using StockGainTracker.Models
-@using StockGainTracker.Services
+@using StockGainTracker.Shared.Models
+@using StockGainTracker.Shared.Services
 @inject StockDataService StockService
-@inject IJSRuntime JS
+@inject ICsvExportService CsvExport
 
 <PageTitle>Stock Gains</PageTitle>
 
@@ -78,7 +77,7 @@ else if (gains is not null)
         sb.AppendLine("Date,Close,% Gain");
         foreach (var g in gains!)
             sb.AppendLine($"{g.Date.ToShortDateString()},{g.Close.ToString("F2")},{g.PercentGain.ToString("F2")}");
-        await JS.InvokeVoidAsync("downloadCsv", $"{ticker}-gains.csv", sb.ToString());
+        await CsvExport.ExportAsync($"{ticker}-gains.csv", sb.ToString());
     }
 
     private async Task LoadData()

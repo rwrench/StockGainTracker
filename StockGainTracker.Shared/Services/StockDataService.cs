@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using StockGainTracker.Models;
+using StockGainTracker.Shared.Models;
 
-namespace StockGainTracker.Services;
+namespace StockGainTracker.Shared.Services;
 
 public class StockDataService
 {

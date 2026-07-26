@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="StockGainTracker/StockGainTracker.csproj" />
+  <Project Path="StockGainTracker.Shared/StockGainTracker.Shared.csproj" />
+  <Project Path="StockGainTracker.MauiApp/StockGainTracker.MauiApp.csproj" />
 </Solution>

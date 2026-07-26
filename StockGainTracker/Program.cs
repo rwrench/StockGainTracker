@@ -1,5 +1,6 @@
 using StockGainTracker.Components;
 using StockGainTracker.Services;
+using StockGainTracker.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient<StockDataService>();
+builder.Services.AddScoped<ICsvExportService, JsCsvExportService>();
 
 var app = builder.Build();
 
@@ -24,6 +26,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(typeof(StockGainTracker.Shared.Components.Pages.StockGains).Assembly);
 
 app.Run();

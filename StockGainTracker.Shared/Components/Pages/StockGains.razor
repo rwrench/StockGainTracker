@@ -51,7 +51,7 @@ else if (gains is not null)
             <tbody>
                 @foreach (var g in gains)
                 {
-                    <tr class="@(g.PercentGain >= 0 ? "text-success" : "text-danger")">
+                    <tr class="@(g.PercentGain >= 0 ? "table-success" : "table-danger")">
                         <td>@g.Date.ToShortDateString()</td>
                         <td>@g.Close.ToString("F2")</td>
                         <td>@g.PercentGain.ToString("F2")%</td>
